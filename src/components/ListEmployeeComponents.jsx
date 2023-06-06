@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 // import { Link } from 'react-router-dom';
+import EmployeeService from "../services/EmployeeService";
 
 export default class ListEmployeeComponents extends Component {
   constructor(props) {
@@ -8,18 +9,28 @@ export default class ListEmployeeComponents extends Component {
     this.state = {
       employees: [],
     };
-
+    this.editEmployee=this.editEmployee.bind(this);
     this.addEmployee = this.addEmployee.bind(this);
   }
 
-  // componentDidMount(){
-  //     EmployeeService.getEmployees().then((res)=>{
-  //         this.setState({employees:res.data});
-  //     })
-  // }
+editEmployee(id){
+    this.props.history.push(`/update-employee/${id}`)
+
+}
+
+  componentDidMount(){
+      EmployeeService.getEmployees().then((res)=>{
+          this.setState({employees:res.data});
+      })
+  }
 
   addEmployee() {
-    this.props.history.push('/add-employee');
+    // console.log(employee)
+    this.props.history.push({ pathname: `/add-employee`,
+    state: this.state.employees}
+);
+
+    console.log('hihiihihi',this.props.history)
     // <Link to='/add-employee'></Link>
   }
 
@@ -50,6 +61,9 @@ export default class ListEmployeeComponents extends Component {
                   <td>{employee.name}</td>
                   <td>{employee.age}</td>
                   <td>{employee.emailId}</td>
+                  <td>
+                    <button onClick={()=>this.editEmployee(employee._id)} className="btn btn-info">Update</button>
+                  </td>
                 </tr>
               ))}
             </tbody>

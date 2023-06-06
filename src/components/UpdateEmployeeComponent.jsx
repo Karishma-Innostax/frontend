@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import EmployeeService from '../services/EmployeeService';
 
-export default class CreateComponentFolder extends Component {
-  
+export default class UpdateEmployeeComponent extends Component {
     constructor(props){
         super(props)
         this.state={
-            _id:null,
+            _id:this.props.match.param.id,
             name:'',
             age:null,
             emailId:'',
@@ -16,11 +15,22 @@ export default class CreateComponentFolder extends Component {
         this.changeIdHandler=this.changeIdHandler.bind(this);
         this.changeNameHandler=this.changeNameHandler.bind(this);
         this.changeAgeHandler=this.changeAgeHandler.bind(this);
-        this.saveEmployee=this.saveEmployee.bind(this);
+        this.updateEmployee=this.updateEmployee.bind(this);
         this.changeEmailHandler=this.changeEmailHandler.bind(this);
     }
-    
-     saveEmployee=(e)=>{
+    componentDidMount(){
+        EmployeeService.getEmployeeById(this.state._id).then(res=>{
+            let employee=res.data;
+            this.setState({
+                _id:employee._id,
+                name:employee.name,
+                age:employee.age,
+                emailId:employee.emailId
+
+            })
+        })
+    }
+    updateEmployee=(e)=>{
         e.preventDefault();
         let employee={
             _id:this.state._id,
@@ -30,9 +40,9 @@ export default class CreateComponentFolder extends Component {
         }
         console.log('employee=>'+JSON.stringify(employee))
 
-        EmployeeService.createEmployee(employee).then(res=>{
-            this.props.history.push('/employee')
-        })
+      EmployeeService.updateEmployee(employee,this.state._id).then(res=>{
+        this.props.history.push('/employee');
+      })
      }
      
 
@@ -93,7 +103,7 @@ export default class CreateComponentFolder extends Component {
                                 onChange={this.changeEmailHandler}/>
                             </div>
                             <br></br>
-                            <button className='btn btn-success' onClick={this.saveEmployee}>Save</button>
+                            <button className='btn btn-success' onClick={this.updateEmployee}>Save</button>
                             <button className='btn btn-danger' onClick={this.cancel.bind(this)} style={{marginLeft:"10px"}}>Delete</button>
                         </form>
                     </div>
